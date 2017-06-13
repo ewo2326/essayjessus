@@ -1,0 +1,27 @@
+---
+- name: preprovision
+  hosts: ec2
+  gather_facts: yes
+  become: yes
+
+  vars_files:
+    - vars/admin
+    - vars/production
+
+  roles:
+    - preprovision
+    - libnss-ldapd
+    - openssh
+
+- name: finish provision
+  hosts: ec2
+  gather_facts: yes
+  become: yes
+
+  vars_files:
+    - vars/user
+    - vars/production
+  roles:
+    - common-prod
+    - sudo
+    - auth-reset

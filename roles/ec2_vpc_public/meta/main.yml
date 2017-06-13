@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: Viacheslav Kuzmenko
+  description: create ec2 instance with extra added volumes (managed via public ip)
+  company: ZEO Alliance
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+  - name: Debian
+    versions:
+    - jessie
+    - wheezy
+  categories:
+  - cloud:ec2
+dependencies: []

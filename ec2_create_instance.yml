@@ -1,0 +1,33 @@
+## ansible-playbook -i production/inventory --limit=somehost.cloudmccloud.com ec2_create_instance.yml
+## Don't forget add ec2 credentials to your /var/user file.
+---
+- name: get aws credentials
+  hosts: ec2
+  connection: local
+  become: no
+  gather_facts: no
+  vars_files:
+    - vars/user
+
+  vars_prompt:
+    - name: "mfa_code"
+      promt: "input mfa code, please"
+
+  roles: 
+    - { role: aws_sts, tags: aws_sts }
+
+  tasks:
+     - set_fact: 
+         ec2_access_key: "{{ assumed_role.sts_creds.access_key }}"
+         ec2_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
+         security_token: "{{ assumed_role.sts_creds.session_token }}"
+
+- name: create ec2 instance
+  hosts: ec2
+  become: no
+  gather_facts: no
+  vars_files:
+    - vars/user
+
+  roles:
+     - { role: ec2_vpc_public, tags: ec2_vpc_public }

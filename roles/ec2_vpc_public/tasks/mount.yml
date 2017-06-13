@@ -1,0 +1,43 @@
+---
+- name: install parted
+  connection: ssh
+  apt: >
+    name=parted
+    update_cache=yes
+
+- name: create partition on volume
+  connection: ssh
+  shell: >
+    /sbin/parted -s -a optimal {{ item.device_name }} mklabel \
+      msdos mkpart primary {{ item.fstype|default("ext4") }} 0% 100%
+  with_items: '{{ volumes_mount }}'
+
+- name: create filesystem on volume
+  connection: ssh
+  filesystem: >
+    fstype={{ item.fstype|default("ext4") }}
+    dev={{ item.device_name }}1
+  with_items: '{{ volumes_mount }}'
+
+- name: mount volume and add to fstab
+  connection: ssh
+  mount: >
+    name={{ item.mount_point }}
+    src={{ item.device_name }}1
+    fstype=ext4
+    opts={{ item.mount_options }}
+    dump={{ item.mount_dump|default(0) }}
+    passno={{ item.mount_passno|default(0) }}
+    state=mounted
+  with_items: '{{ volumes_mount }}'
+
+- name: change permission for mount point
+  connection: ssh
+  file: >
+    path={{ item.mount_point }}
+    owner={{ item.mount_point_owner|default("root") }}
+    group={{ item.mount_point_group|default("root") }}
+    mode={{ item.mount_point_mode|default(0755) }}
+    state=directory
+    recurse=yes
+  with_items: '{{ volumes_mount }}'

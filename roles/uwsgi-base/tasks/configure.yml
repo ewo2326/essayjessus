@@ -1,0 +1,19 @@
+---
+- name: Configuring uwsgi in emperor mode
+  copy: >
+    src=uwsgi.service
+    dest=/etc/systemd/system/uwsgi.service
+- file: >
+    path=/etc/uwsgi/vassals/
+    state=directory
+- file: >
+    path=/var/log/uwsgi/
+    state=directory
+    owner=www-data
+    group=www-data
+- copy: >
+    src=emperor.ini
+    dest=/etc/uwsgi/
+  notify:
+     - enable uwsgi
+     - restart uswgi

@@ -1,0 +1,14 @@
+---
+- name: Install pip and uwsgi
+  apt: >
+   name={{item}}
+   state=latest
+  with_items:
+   - python3-dev
+   - libpcre3
+   - libpcre3-dev
+   - python3-pip
+
+
+- command: pip3 install uwsgi
+

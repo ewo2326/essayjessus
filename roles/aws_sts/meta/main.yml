@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: Viacheslav Kuzmenko
+  description: assume a role using aws security token service and obtain temporary credentials
+  company: ZEO Alliance
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+  - name: Debian
+    versions:
+    - jessie
+    - wheezy
+  categories:
+  - cloud:iam
+dependencies: []
