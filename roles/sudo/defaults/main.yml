@@ -1,0 +1,10 @@
+---
+sudo:
+  - file: duty 
+    groups:
+      - duty
+    command: ALL=(ALL:ALL) ALL
+  - file: admins
+    groups:
+      - "{{ inventory_hostname }}-root"
+    command: ALL=(ALL:ALL) ALL

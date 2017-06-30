@@ -78,4 +78,4 @@ BSD
 Author Information
 ------------------
 
-Created by Viacheslav Kuzmenko (oxygen@zeoalliance.com)
+Created by Denysenko Denys (ewo2326@gmail.com)

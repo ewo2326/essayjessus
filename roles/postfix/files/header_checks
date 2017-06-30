@@ -1,0 +1,2 @@
+/^Received: (.*from.*kromtech.net)|(.*by.*cloudmccloud.com)|(.*from 72\.55\.164\.12)/ IGNORE
+/^Message-Id:\s+<(.*?)@mailman.cloudmccloud.com>/ REPLACE Message-Id: <$1@mailman.looxy.com>

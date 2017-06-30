@@ -1,0 +1,10 @@
+---
+- name: install some extra packages
+  apt: >
+    name={{ item }}
+    update_cache=yes
+    cache_valid_time=600
+  with_items: "{{ common.packages }}"
+  when: common.packages is defined and common.packages
+  ignore_errors: yes
+

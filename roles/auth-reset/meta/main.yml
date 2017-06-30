@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Vilen Virzhakovskiy
+  description: authentication reset and delete user admin
+  company: ZEO Alliance
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+  - name: Debian
+    versions:
+    - jessie
+    - squeeze
+    - wheezy
+  categories:
+  - system
+dependencies: []

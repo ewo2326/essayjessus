@@ -1,0 +1,13 @@
+---
+#- name: Add mysql repository http://repo.mysql.com/apt/debian/
+#  template: src=mysql.list.j2 dest=/etc/apt/sources.list.d/mysql.list
+
+
+- name: install mysql-server
+  apt: name={{ item }} state=present update_cache=no force=yes
+  with_items:
+      - python-mysqldb
+      - mysql-server
+
+- name: enable mysql services
+  service: name=mysql enabled=yes state=started

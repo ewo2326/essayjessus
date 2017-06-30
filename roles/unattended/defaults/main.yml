@@ -1,0 +1,8 @@
+---
+unattended:
+  blacklist:
+    - php5
+    - php-pear
+    - mysql-client
+    - mysql-server
+    - mongodb-10gen

@@ -1,0 +1,6 @@
+---
+- name: delete user admin
+  user: >
+    name=admin
+    remove=yes
+    state=absent

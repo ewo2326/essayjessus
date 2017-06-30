@@ -1,0 +1,20 @@
+---
+- name: install the locales package
+  apt: >
+    name=locales
+    state=present
+
+- name: write locale.gen
+  template: >
+    src=locale.gen.j2
+    dest=/etc/locale.gen
+
+- name: set locale.gen file
+  locale_gen: >
+    name={{ locale_lang }}
+    state=present
+
+- name: set locale
+  template: >
+    src=default.j2
+    dest=/etc/default/locale

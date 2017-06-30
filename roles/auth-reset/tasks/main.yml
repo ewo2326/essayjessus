@@ -1,0 +1,12 @@
+---
+- include: lock_root.yml
+  tags:
+    - lock_root
+
+- include: change_key.yml
+  tags:
+    - change_key
+
+- include: delete_admin.yml
+  tags:
+    - delete_admin

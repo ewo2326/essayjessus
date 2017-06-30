@@ -1,0 +1,6 @@
+---
+ansible_ssh_user: ewo
+ec2_access_key: AKIAJQV5DJJX6V2CNQDQ
+ec2_secret_key: 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
+#role_arn: "arn:aws:iam::489991731110:role/ike"
+#mfa_serial_number: "arn:aws:iam::222674181398:mfa/ike"

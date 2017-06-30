@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: Viacheslav Kuzmenko
+  description: install and configure postfix
+  company: ZEO Alliance
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+  - name: Debian
+    versions:
+    - jessie
+    - squeeze
+    - wheezy
+  categories:
+  - mail
+  - system
+dependencies:
+  - { role: opendkim, tags: opendkim, when: groups.opendkim is defined and inventory_hostname in groups.opendkim }

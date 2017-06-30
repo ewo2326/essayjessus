@@ -1,0 +1,35 @@
+---
+- name: update mysql root password for all root accounts
+  mysql_user: >
+    name=root
+    host={{ item }}
+    password="{{ lookup('file', playbook_dir + '/vars/secrets/mysql/' + inventory_hostname + '/root') }}"
+  with_items:
+    - "{{ inventory_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+  when: inventory_hostname != 'localhost'
+
+- name: update mysql root password for all root accounts
+  mysql_user: >
+    name=root
+    host={{ item }}
+    password="{{ lookup('file', playbook_dir + '/vars/secrets/mysql/' + inventory_hostname + '/root') }}"
+  with_items:
+    - 127.0.0.1
+    - ::1
+    - localhost
+  when: inventory_hostname == 'localhost'
+
+- name: activate passwordless access for root user
+  template: >
+    src=.my.cnf.j2
+    dest=/root/.my.cnf
+    mode=0600
+
+#- name: removes all anonymous user accounts
+#  mysql_user: >
+#    name=''
+#    host_all=yes
+#    state=absent

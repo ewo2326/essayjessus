@@ -1,0 +1,10 @@
+---
+
+- name: Configure new template
+  template: >
+    src=vhost.j2
+    dest=/etc/nginx/vhosts/{{item.name}}.conf
+    owner=www-data
+    group=www-data
+    mode=0755
+  with_items: "{{ VHOSTS }}"

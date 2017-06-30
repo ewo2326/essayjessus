@@ -1,0 +1,7 @@
+---
+samba4:
+sudo:
+  - file: kt-admins
+    groups:
+      - kt-admin
+    command: ALL=(ALL:ALL) ALL

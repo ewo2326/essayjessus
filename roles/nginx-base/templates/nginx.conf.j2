@@ -1,0 +1,30 @@
+user {{NG_OWNER}};
+worker_processes  auto;
+
+events {
+    use epoll;
+    worker_connections 1024;
+    multi_accept on;
+}
+http {
+server_tokens off;
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+#    log_format  main '$remote_addr - $server_name - $remote_user [$time_local] ($scheme) "$request" "$status" $body_bytes_sent "$http_referer" "$http_user_agent" "$request_time sec"';
+#    log_format main '$http_x_forwarded_for $server_name $remote_user [$time_local] ($scheme) "$request" "$status" $body_bytes_sent "$http_referer" "$http_user_agent" "$request_time sec"';
+    log_format main '$remote_addr $http_host $remote_user [$time_local] ($scheme) "$request" "$status" $body_bytes_sent "$http_referer" "$http_user_agent" "$request_time sec"';
+
+    access_log  /var/log/nginx/access.log  main;
+    sendfile        on;
+    keepalive_timeout  65;
+    gzip on;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_proxied expired no-cache no-store private auth;
+    gzip_types text/plain text/xml application/xml application/x-javascript text/javascript text/css text/json;
+    gzip_comp_level 8;
+    gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+    include /etc/nginx/vhosts/*;
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/site-enabled/*;
+}

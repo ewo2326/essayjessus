@@ -1,0 +1,51 @@
+---
+- name: Copy nginx.conf
+  template: >
+    src=nginx.conf.j2
+    dest=/etc/nginx/nginx.conf
+  notify:
+    - reload nginx
+
+- name: Create directories
+  file: >
+    path={{ item.path }}
+    state=directory
+    owner={{ item.owner }}
+    group={{ item.group }}
+  with_items:
+    - { path: /etc/nginx/vhosts, owner: root, group: root }
+    - { path: /var/www, owner: www-data, group: www-data }
+    - { path: /var/www/default, owner: www-data, group: www-data }
+
+
+- name: Copy default config
+  template: >
+    src=default.conf.j2
+    dest=/etc/nginx/vhosts/default.conf
+
+
+- name: Create index.html in /var/www/default
+  lineinfile: >
+    dest=/var/www/default/index.html
+    line='All-OK'
+    create=true
+
+- name: Activate logrotate
+  copy: >
+    src=nginx
+    dest=/etc/logrotate.d
+
+- name: Change log directory files permissions
+  file: >
+    path=/var/log/nginx
+    state=directory
+    owner=www-data
+    group=www-data
+    recurse=yes
+#- name: Copy ssl keys
+#  copy: src=ssl dest=/etc/nginx/
+#- file: >
+#    path=/etc/nginx/ssl
+#    state=directory
+#    mode=700
+#    recurse=yes

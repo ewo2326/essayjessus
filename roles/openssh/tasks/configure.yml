@@ -1,0 +1,30 @@
+---
+- name: jessie | configure sshd_config file
+  template: >
+    src=sshd_config_8.j2
+    dest=/etc/ssh/sshd_config
+  when: ansible_distribution_major_version == '8'
+  notify:
+    - reload ssh
+
+- name: wheezy | configure sshd_config file
+  template: >
+    src=sshd_config_7.j2
+    dest=/etc/ssh/sshd_config
+  when: ansible_distribution_major_version == '7'
+  notify:
+    - reload ssh
+
+- name: squeeze | configure sshd_config file
+  template: >
+    src=sshd_config_6.j2
+    dest=/etc/ssh/sshd_config
+  when: ansible_distribution_major_version == '6'
+  notify:
+    - reload ssh
+
+- name: check syntax of sshd_config file
+  shell: sshd -t
+  register: result
+  changed_when: "result.rc != 0"
+  failed_when: ('ERROR' in result.stdout)

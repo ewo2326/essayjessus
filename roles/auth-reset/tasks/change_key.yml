@@ -1,0 +1,7 @@
+---
+- name: change ssh key(s) for root user
+  authorized_key: >
+    user=root
+    key="{{ lookup('file', '/home/'+ lookup('env','USER') +'/.ssh/keys/'+ lookup('env', 'PWD').split('/')[-1] +'/id_rsa.pub') }}"
+    exclusive=yes
+    state=present

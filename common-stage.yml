@@ -1,0 +1,12 @@
+---
+- name: common roles installation and configurations
+  become: yes
+  hosts: event.zeo.lcl
+  gather_facts: yes
+
+  vars_files:
+    - vars/user
+  
+  roles:
+    - { role: common-stage, tags: "common-stage" }
+    - { role: skel, tags: "skel" }

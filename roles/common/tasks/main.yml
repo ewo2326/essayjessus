@@ -1,0 +1,20 @@
+---
+- include: common.yml
+  when: ansible_distribution_major_version >= '7'
+  tags:
+    - install_common_packages
+    - install
+    - common_packages
+
+- include: common_6.yml
+  when: ansible_distribution_major_version == '6'
+  tags:
+    - install_common_packages
+    - install
+    - common_packages
+
+- include: extra.yml
+  tags:
+    - install_extra_packages
+    - install
+    - extra_packages

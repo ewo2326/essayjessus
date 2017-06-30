@@ -1,0 +1,15 @@
+---
+- include: install.yml
+  tags:
+    - install_mysql-server
+    - install
+
+- include: configure.yml
+  tags:
+    - configure_mysql-server
+    - configure
+
+- include: users.yml
+  tags:
+    - users_mysql
+    - mysql_user

@@ -1,0 +1,53 @@
+---
+- name: install some common packages
+  apt: >
+    name={{ item }}
+    update_cache=yes
+  with_items:
+#    - chkconfig
+    - curl
+    - debian-archive-keyring
+    - debian-goodies
+    - debian-keyring
+    - debconf-utils
+    - dmidecode
+    - dnsutils
+    - ethtool
+    - finger
+    - git
+    - htop
+    - iotop
+    - iptraf
+    - less
+    - locate
+    - logtop
+    - lsb-release
+    - lshw
+    - mc
+    - most
+    - mtr-tiny
+    - mutt
+    - ncdu
+    - netdiag
+    - nmap
+    - pax
+    - parted
+    - pigz
+    - psmisc
+    - pwgen
+    - rsync
+    - saidar
+    - screen
+    - sockstat
+    - subversion
+    - sudo
+    - sysstat
+    - tcpdump
+    - telnet
+    - unrar-free
+    - unzip
+    - vim
+    - vim-nox
+    - whois
+    - zip
+    - zsh

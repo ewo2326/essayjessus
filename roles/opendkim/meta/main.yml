@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  author: Viacheslav Kuzmenko
+  description: install and configure opendkim
+  company: ZEO Alliance
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+  - name: Debian
+    versions:
+    - jessie
+    - squeeze
+    - wheezy
+  categories:
+  - networking
+  - system
+dependencies: []

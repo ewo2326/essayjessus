@@ -1,0 +1,32 @@
+---
+- name: squeeze | copy sources list
+  template: >
+    src=sources.list.j2
+    dest=/etc/apt/sources.list
+  when: ansible_distribution == 'Debian' and
+        ansible_distribution_major_version == '6'
+
+- name: squeeze | fix expired type message
+  copy: >
+    src=squeeze-archive
+    dest=/etc/apt/apt.conf.d/60squeeze-archive
+  when: ansible_distribution == 'Debian' and
+        ansible_distribution_major_version == '6'
+
+- name: wheezy | copy sources list
+  template: >
+    src=sources.list.j2
+    dest=/etc/apt/sources.list
+  when: ansible_distribution == 'Debian' and
+        ansible_distribution_major_version == '7'
+
+- name: jessie | copy sources list
+  template: >
+    src=sources.list.j2
+    dest=/etc/apt/sources.list
+  when: ansible_distribution == 'Debian' and
+        ansible_distribution_major_version == '8'
+
+- name: apt-cache update
+  apt: >
+    update_cache=yes

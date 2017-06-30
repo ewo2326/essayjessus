@@ -1,0 +1,19 @@
+---
+keypair: ewo
+instance_type: t2.micro
+public_ip: "{{ ansible_host }}"
+private_ip: 172.31.48.5
+security_group: [default]
+vpc_subnet_id: subnet-f3be90cf
+image: ami-b14ba7a7
+region: us-east-1
+zone: us-east-1e
+ec2_url: "https://ec2.amazonaws.com"
+#instance_profile_name: app
+ebs_optimized: no
+mail_from: ansible@essayjesus.com
+mail_to: ewo2326@gmail.com
+volumes:
+  - device_name: /dev/xvda
+    device_type: gp2
+    volume_size: 10

@@ -1,0 +1,8 @@
+---
+- name: copy header_checks file
+  copy: >
+    src=header_checks
+    dest=/etc/postfix/header_checks
+  when: groups.mx_looxy is defined and inventory_hostname in groups.mx_looxy
+  notify:
+    - reload postfix

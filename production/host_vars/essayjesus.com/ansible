@@ -1,0 +1,6 @@
+---
+ansible_host: 52.72.92.246
+ENV: production
+postfix_aliases:
+  root:
+    alias: ewo2326@gmail.com

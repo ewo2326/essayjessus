@@ -1,0 +1,31 @@
+---
+galaxy_info:
+  author: Viacheslav Kuzmenko
+  description: common meta role for production environment
+  company: ZEO Alliance
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+  - name: Debian
+    versions:
+    - jessie
+    - squeeze
+    - wheezy
+  categories:
+  - system
+dependencies:
+  - { role: hostname, tags: hostname }
+  - { role: hosts, tags: hosts }
+#  - { role: openssh, tags: openssh }
+#  - { role: skel, tags: skel }
+  - { role: motd, tags: motd }
+  - { role: locale, tags: locale }
+  - { role: timezone, tags: timezone }
+  - { role: ntp, tags: ntp }
+  - { role: ulimit, tags: ulimit }
+#  - { role: postfix, tags: postfix }
+  - { role: sources-list, tags: sources-list }
+  - { role: common, tags: common }
+  - { role: unattended, tags: unattended }
+#  - { role: postinstall, tags: postinstall }
+#  - { role: logwatch, tags: logwatch }

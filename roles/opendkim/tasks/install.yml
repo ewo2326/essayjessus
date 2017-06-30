@@ -1,0 +1,42 @@
+---
+- name: squeeze | install opendkim
+  apt: >
+    name=opendkim
+    state=latest
+    update_cache=yes
+    cache_valid_time=600
+  when: ansible_distribution == 'Debian' and ansible_distribution_major_version == "6"
+
+- name: wheezy | install opendkim
+  apt: >
+    name={{ item }}
+    state=latest
+    update_cache=yes
+    cache_valid_time=600
+  with_items:
+    - opendkim
+    - opendkim-tools
+  when: ansible_distribution == 'Debian' and ansible_distribution_major_version == "7"
+
+- name: jessie | install opendkim
+  apt: >
+    name={{ item }}
+    state=latest
+    update_cache=yes
+    cache_valid_time=600
+  with_items:
+    - opendkim
+    - opendkim-tools
+  when: ansible_distribution == 'Debian' and ansible_distribution_major_version == "8"
+
+- name: install opendkim on localhost
+  apt: >
+    name={{ item }}
+    state=latest
+    update_cache=yes
+    cache_valid_time=600
+  with_items:
+    - opendkim
+    - opendkim-tools
+  delegate_to: localhost
+  when: opendkim is defined and opendkim

@@ -1,0 +1,185 @@
+---
+- name: modify /etc/hosts file
+  template: >
+    src=hosts.j2
+    dest=/etc/hosts
+
+- name: install dependencies
+  apt: >
+    name={{ item }}
+  with_items:
+    - dbus
+
+- name: set hostname
+  hostname: >
+    name={{ inventory_hostname }}
+
+- name: configure libnss-ldapd package
+  debconf: >
+    name={{ item.name }}
+    question={{ item.question }}
+    value='{{ item.value }}'
+    vtype={{ item.vtype }}
+  with_items:
+    - { name: 'libnss-ldapd',
+        question: 'libnss-ldapd/nsswitch',
+        value: 'group, hosts, passwd, shadow',
+        vtype: 'multiselect'
+       }
+    - { name: 'libnss-ldapd:amd64',
+        question: 'libnss-ldapd/nsswitch',
+        value: 'group, hosts, passwd, shadow',
+        vtype: 'multiselect'
+       }
+    - { name: 'libnss-ldapd',
+        question: 'libnss-ldapd/clean_nsswitch',
+        value: 'false',
+        vtype: 'boolean'
+       }
+    - { name: 'libnss-ldapd:amd64',
+        question: 'libnss-ldapd/clean_nsswitch',
+        value: 'false',
+        vtype: 'boolean'
+       }
+
+- name: install libnss-ldapd
+  apt: >
+    name={{ item }}
+    state=latest
+    update_cache=yes
+    cache_valid_time=600
+  with_items:
+    - libnss-ldapd
+    - libpam-ldapd
+    - nslcd
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: install openssl and ca-certificates
+  apt: >
+    name={{ item }}
+    state=latest
+    update_cache=yes
+    cache_valid_time=600
+  with_items:
+    - openssl
+    - ca-certificates
+
+- name: install ca certificate
+  copy: >
+    src=zeoca.crt
+    dest=/usr/local/share/ca-certificates
+
+- name: squeeze | install sub-ca and rca certificates
+  copy: >
+    src={{ item }}
+    dest=/usr/local/share/ca-certificates
+  with_items:
+    - rca.crt
+    - sca.zeo.lcl_Sub-CA_squeeze.crt
+    - sub-ca.crt
+  when: ansible_distribution_major_version == '6'
+
+- name: install sub-ca and rca certificates
+  copy: >
+    src={{ item }}
+    dest=/usr/local/share/ca-certificates
+  with_items:
+    - rca.crt
+    - sca.zeo.lcl_Sub-CA_1.crt
+    - sca.zeo.lcl_Sub-CA_2.crt
+    - sca.zeo.lcl_Sub-CA_3.crt
+    - sca.zeo.lcl_Sub-CA.crt
+    - sub-ca.crt
+  when: ansible_distribution_major_version == '7' or
+        ansible_distribution_major_version == '8'
+
+- name: update ca certificates
+  command: >
+    update-ca-certificates
+
+- name: configure libpam-runtime package
+  debconf: >
+    name={{ item.name }}
+    question={{ item.question }}
+    value='{{ item.value }}'
+    vtype={{ item.vtype }}
+  with_items:
+    - { name: 'libpam-runtime',
+        question: 'libpam-runtime/override',
+        value: 'false',
+        vtype: 'boolean'
+       }
+    - { name: 'libpam-runtime',
+        question: 'libpam-runtime/profiles',
+        value: 'unix, ldap, consolekit',
+        vtype: 'multiselect'
+       }
+
+- name: update pam-auth
+  command: pam-auth-update
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: set make home directories
+  lineinfile: >
+    dest=/etc/pam.d/common-session
+    insertafter=EOF
+    line="session{{ '\t' }}required{{ '\t' }}{{ '\t' }}{{ '\t' }}pam_mkhomedir.so skel=/etc/skel/ umask=0077"
+  when: samba4 is defined and not samba4
+
+- name: set make home directories
+  lineinfile: >
+    dest=/etc/pam.d/common-session
+    insertafter=EOF
+    line="session{{ '\t' }}required{{ '\t' }}{{ '\t' }}{{ '\t' }}pam_mkhomedir.so skel=/etc/skel/ umask=0077"
+  when: samba4.kerberos is defined and not samba4.kerberos
+
+- name: set make home directories and change group owner
+  lineinfile: >
+    dest=/etc/pam.d/common-session
+    insertafter=EOF
+    line="{{ item }}"
+  with_items:
+    - session{{ '\t' }}required{{ '\t' }}{{ '\t' }}{{ '\t' }}pam_mkhomedir.so skel=/etc/skel/ umask=027
+    - session{{ '\t' }}required{{ '\t' }}{{ '\t' }}{{ '\t' }}pam_exec.so /etc/logon
+  when: samba4.kerberos is defined and samba4.kerberos
+
+- name: copy logon script
+  copy: >
+    src=logon
+    dest=/etc
+    mode=0755
+  when: samba4.kerberos is defined and samba4.kerberos
+
+- name: copy nslcd config file
+  template: >
+    src=nslcd.conf.j2
+    dest=/etc/nslcd.conf
+  notify:
+    - restart nscd
+    - restart nslcd
+
+- name: install sudo package
+  apt: >
+    name=sudo
+    update_cache=yes
+    cache_valid_time=600
+
+- name: copy sudoers file
+  copy: >
+    src=sudoers
+    dest=/etc/sudoers
+    owner=root
+    group=root
+    mode=0440
+
+- name: copy sudoers.d file(s)
+  template: >
+    src=sudo.j2
+    dest=/etc/sudoers.d/{{ item.file }}
+    owner=root
+    group=root
+    mode=0440
+  with_items: '{{ sudo }}'
+  when: item.state|default('present') == 'present'

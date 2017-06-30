@@ -1,0 +1,6 @@
+localhost
+{% if opendkim.trusted is defined and opendkim.trusted %}
+{% for host in opendkim.trusted %}
+{{ host }}
+{% endfor %}
+{% endif %}

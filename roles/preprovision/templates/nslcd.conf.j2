@@ -1,0 +1,49 @@
+# /etc/nslcd.conf
+# nslcd configuration file. See nslcd.conf(5)
+# for details.
+
+# The user and group nslcd should run as.
+uid nslcd
+gid nslcd
+
+# The location at which the LDAP server(s) should be reachable.
+uri ldaps://{{ ldap_server_1 }}/ ldaps://{{ ldap_server_2 }}/
+
+# The search base that will be used for all queries.
+base    dc=zeo,dc=lcl
+base    passwd ou=Deps,dc=zeo,dc=lcl
+base    shadow ou=Deps,dc=zeo,dc=lcl
+base    group dc=zeo,dc=lcl
+
+# The LDAP protocol version to use.
+ldap_version 3
+
+# The DN to bind with for normal lookups.
+binddn {{ ldap_user }}@zeo.lcl
+bindpw {{ ldap_pass }}
+
+# The DN used for password modifications by root.
+#rootpwmoddn cn=admin,dc=example,dc=com
+
+# SSL options
+ssl on
+tls_reqcert hard
+tls_cacertfile /etc/ssl/certs/ca-certificates.crt
+{% if ansible_distribution_major_version < '8' %}
+tls_ciphers NORMAL:!VERS-TLS1.2
+{% endif %}
+
+# The search scope.
+scope sub
+
+# Mappings for Active Directory
+pagesize 1000
+referrals off
+filter passwd (&(objectClass=person)(!(userAccountControl=514))(|(memberOf=CN={{ inventory_hostname }},OU={{ ldap_ou }},OU=Servers,DC=zeo,DC=lcl)(memberOf=CN={{ inventory_hostname }}-www,OU={{ ldap_ou }},OU=Servers,DC=zeo,DC=lcl)(memberOf=CN={{ inventory_hostname }}-root,OU={{ ldap_ou }},OU=Servers,DC=zeo,DC=lcl)(memberOf=CN=kt-admin,OU=IT Infrastructure,OU=Deps,DC=zeo,DC=lcl)(memberOf=CN=duty,OU=IT Infrastructure,OU=Deps,DC=zeo,DC=lcl)))
+map    passwd uid              sAMAccountName
+map    passwd homeDirectory    unixHomeDirectory
+map    passwd gecos            displayName
+filter shadow (&(objectClass=person)(!(userAccountControl=514))(|(memberOf=CN={{ inventory_hostname }},OU={{ ldap_ou }},OU=Servers,DC=zeo,DC=lcl)(memberOf=CN={{ inventory_hostname }}-www,OU={{ ldap_ou }},OU=Servers,DC=zeo,DC=lcl)(memberOf=CN={{ inventory_hostname }}-root,OU={{ ldap_ou }},OU=Servers,DC=zeo,DC=lcl)(memberOf=CN=kt-admin,OU=IT Infrastructure,OU=Deps,DC=zeo,DC=lcl)(memberOf=CN=duty,OU=IT Infrastructure,OU=Deps,DC=zeo,DC=lcl)))
+map    shadow uid              sAMAccountName
+map    shadow shadowLastChange pwdLastSet
+filter group  (&(objectClass=group)(gidNumber=*))

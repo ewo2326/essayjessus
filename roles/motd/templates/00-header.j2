@@ -1,0 +1,13 @@
+#!/bin/sh
+[ -r /etc/lsb-release ] && . /etc/lsb-release
+
+if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
+        # Fall back to using the very slow lsb_release utility
+        DISTRIB_DESCRIPTION=$(lsb_release -s -d)
+fi
+
+/bin/echo
+/bin/echo -e "    \e[01;34mOS: \e[32m$DISTRIB_DESCRIPTION\e[0m"
+/bin/echo -e "    \e[01;34mKernel: \e[32m$(uname -r)\e[0m"
+/bin/echo -e "    \e[01;34mHostname: \e[32m{{ inventory_hostname }}\e[0m"
+/bin/echo -e "    \e[01;34mEnvironment: \e[32m{{ ENV }}\e[0m\n"

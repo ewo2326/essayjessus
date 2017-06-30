@@ -1,0 +1,18 @@
+server {
+    listen  80 default;
+
+    location / {
+        root   /var/www/default;
+        index  index.html index.htm;
+    }
+{% if nginx_stub_status is defined %}
+    location = /nginx_stats {
+        stub_status {{ nginx_stub_status }};
+{% for status in nginx_stub_status_ip %}
+        {{ status.perm }} {{ status.ip }};
+{% endfor %}
+        deny all;
+    }
+{% endif %}
+
+}

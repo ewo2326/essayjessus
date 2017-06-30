@@ -1,0 +1,108 @@
+---
+- name: copy config file
+  template: >
+    src=opendkim.conf.j2
+    dest=/etc/opendkim.conf
+
+- name: create directory for keys
+  file: >
+    path=/etc/opendkim
+    state=directory
+
+- name: create directories for domains
+  file: >
+    path=/etc/opendkim/{{ item }}
+    state=directory
+  with_items:
+    - '{{ opendkim.domains|default([]) }}'
+
+- name: create directories for domains
+  sudo: no
+  file: >
+    path={{ playbook_dir }}/roles/opendkim/files/{{ item }}
+    state=directory
+  with_items:
+    - '{{ opendkim.domains|default([]) }}'
+  delegate_to: localhost
+  when: opendkim is defined and opendkim
+
+- name: generate keys
+  command: >
+    opendkim-genkey -D /etc/opendkim/{{ item }} -d {{ item }} -s {{ opendkim.selector }}
+    creates=/etc/opendkim/{{ item }}/{{ opendkim.selector }}.private
+  with_items:
+    - '{{ opendkim.domains|default([]) }}'
+  when: opendkim is defined and opendkim
+
+- name: generate keys
+  sudo: no
+  command: >
+    opendkim-genkey -D {{ playbook_dir }}/roles/opendkim/files/{{ item }} -d {{ item }} -s {{ opendkim.selector }}
+    creates={{ playbook_dir }}/roles/opendkim/files/{{ item }}/{{ opendkim.selector }}.private
+  with_items:
+    - '{{ opendkim.domains|default([]) }}'
+  delegate_to: localhost
+  when: opendkim is defined and opendkim
+
+- name: copy keys to remote host
+  copy: >
+    src={{ item.0 }}/{{ opendkim.selector }}.{{ item.1 }}
+    dest=/etc/opendkim/{{ item.0 }}
+  with_nested:
+    - '{{ opendkim.domains|default([]) }}'
+    - [ 'private', 'txt' ]
+  when: opendkim is defined and opendkim
+
+- name: change group for keys
+  shell: chgrp opendkim /etc/opendkim/{{ item }}/*
+  with_items:
+    - '{{ opendkim.domains|default([]) }}'
+
+- name: change permissions for keys
+  shell: chmod g+r /etc/opendkim/{{ item }}/*
+  with_items:
+    - '{{ opendkim.domains|default([]) }}'
+
+- name: create keys list
+  template: >
+    src=keytable.j2
+    dest=/etc/opendkim/keytable
+  notify:
+    - restart opendkim
+
+- name: create signing list
+  template: >
+    src=signingtable.j2
+    dest=/etc/opendkim/signingtable
+  notify:
+    - restart opendkim
+
+- name: create trusted hosts list
+  template: >
+    src=trustedhosts.j2
+    dest=/etc/opendkim/trustedhosts
+  notify:
+    - restart opendkim
+
+- name: change opendkim default file
+  lineinfile: >
+    dest=/etc/default/opendkim
+    insertafter=EOF
+    line='SOCKET="inet:8891@localhost"'
+  notify:
+    - restart opendkim
+
+- name: change postfix config file
+  lineinfile: >
+    dest=/etc/postfix/main.cf
+    insertafter=EOF
+    line='{{ item }}'
+  with_items:
+    - ' '
+    - '# DK and DKIM'
+    - 'smtpd_milters = inet:localhost:8891'
+    - 'non_smtpd_milters = inet:localhost:8891'
+    - 'milter_protocol = 2'
+    - 'milter_default_action = accept'
+  notify:
+    - reload postfix

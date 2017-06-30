@@ -1,0 +1,12 @@
+---
+- name: remove the test database
+  mysql_db: >
+    name=test
+    state=absent
+
+- name: copy my.cnf config file
+  template: >
+    src=my.cnf.j2
+    dest=/etc/mysql/my.cnf
+  notify:
+    - restart mysql

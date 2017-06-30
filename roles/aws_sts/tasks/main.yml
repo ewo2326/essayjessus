@@ -2,9 +2,9 @@
   sts_assume_role: >
     aws_access_key="{{ ec2_access_key }}"
     aws_secret_key="{{ ec2_secret_key }}"
-    role_arn="{{ role_arn }}"
-    role_session_name="{{ role_session_name }}"
-    region="{{ region }}"
-    mfa_serial_number="{{ mfa_serial_number }}"
-    mfa_token="{{ mfa_code }}"
-  register: assumed_role
+#    role_arn="{{ role_arn }}"
+#    role_session_name="{{ role_session_name }}"
+#    region="{{ region }}"
+#    mfa_serial_number="{{ mfa_serial_number }}"
+#    mfa_token="{{ mfa_code }}"
+#  register: assumed_role

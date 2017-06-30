@@ -1,0 +1,3 @@
+[client]
+user=root
+password={{ lookup('file', playbook_dir + '/vars/secrets/mysql/' + inventory_hostname + '/root') }}

@@ -1,0 +1,4 @@
+nginx_stub_status: 'on'
+nginx_stub_status_ip:
+  - { perm: allow, ip: 127.0.0.1 }
+#  - { perm: allow, ip: 52.200.147.193 }
